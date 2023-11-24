@@ -1,7 +1,7 @@
 
 FROM node:14
 
-ENV TASKS=4
+ENV TASKS=50 PORT=3000
 
 WORKDIR /app
 

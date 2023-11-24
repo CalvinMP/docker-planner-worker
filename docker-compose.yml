@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 
 services:
   planner:
@@ -6,9 +6,21 @@ services:
       context: ./planner
     ports:
       - "3000:3000"
+    networks:
+      - my_network
 
   worker:
     build:
       context: ./worker
-    ports:
-      - "8080:8080"
+    networks:
+      - my_network
+    depends_on:
+      - planner
+    environment:
+      - ADD=true
+      - MULT=true
+    scale: 10
+
+networks:
+  my_network:
+    driver: bridge

@@ -12,9 +12,7 @@ const args = () => ({ a: randInt(0, 40), b: randInt(0, 40) })
 const generateTasks = (i) =>
   new Array(i).fill(1).map((_) => ({ type: taskType(), args: args() }))
 
-let workers = [
-  // { url: 'http://localhost:8080', id: '' }
-]
+let workers = []
 
 const app = express()
 app.use(express.json())
@@ -30,9 +28,11 @@ app.get('/', (req, res) => {
 
 app.post('/register', (req, res) => {
   const { url, id } = req.body
+  console.log(url)
   console.log(`Register: adding ${url} worker: ${id}`)
-  workers.push({ url, id })
+  workers.push({ id, url })
   res.send('ok')
+  console.log("Number of workers: ", workers.length + "\n")
 })
 
 let tasks = generateTasks(nbTasks)
@@ -43,15 +43,23 @@ const wait = (mili) =>
 
 const sendTask = async (worker, task) => {
   console.log(`=> ${worker.url}/${task.type}`, task)
+    //   if (!isTaskTypeSupported(worker, task.type)) {
+    //   console.error(`${worker.url} does not support task type: ${task.type}`);
+    //   return;
+    // }
+
   workers = workers.filter((w) => w.id !== worker.id)
   tasks = tasks.filter((t) => t !== task)
+
   const request = fetch(`${worker.url}/${task.type}`, {
     method: 'POST',
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
     },
+
     body: JSON.stringify(task.args),
+
   })
     .then((res) => {
       workers = [...workers, worker]
@@ -72,7 +80,7 @@ const sendTask = async (worker, task) => {
 }
 
 const main = async () => {
-  console.log(tasks)
+  console.log("Number of tasks: " + tasks.length)
   while (taskToDo > 0) {
     await wait(100)
     if (workers.length === 0 || tasks.length === 0) continue
@@ -87,3 +95,12 @@ const server = app.listen(port, () => {
   console.log('starting tasks...')
   main()
 })
+
+
+//DEFINE
+// const isTaskTypeSupported = (worker, taskType) => {
+//   return (
+//     (taskType === 'mult' && worker.supportsMult) ||
+//     (taskType === 'add' && worker.supportsAdd)
+//   );
+// }

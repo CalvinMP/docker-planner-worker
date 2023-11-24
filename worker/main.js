@@ -7,16 +7,18 @@ console.log(id)
 const PLANNER =
   process.env.PLANNER !== undefined
     ? process.env.PLANNER
-    : 'http://localhost:3000'
+    : 'http://planner:3000'
 const MULT =
   process.env.MULT !== undefined ? JSON.parse(process.env.MULT) : true
 const ADD = process.env.ADD !== undefined ? JSON.parse(process.env.ADD) : true
 const app = express()
-const port = process.env.PORT || 8080
+
+const workerPort = process.env.WORKER_PORT || 8080
 const ADDRESS =
   process.env.ADDRESS !== undefined
     ? process.env.ADDRESS
-    : 'http://localhost:' + port
+    : `http://worker:${workerPort}`
+
 const randInt = (min, max) => Math.floor(Math.random() * (max - min)) + min
 const register = () =>
   fetch(PLANNER + '/register', {
@@ -69,7 +71,7 @@ if (ADD)
     const duration = randInt(3000, 7000)
     setTimeout(() => {
       add = false
-      res.send(JSON.stringify({ res: a + b, duration, id }))
+      res.send(JSON.stringify({ res: a + b, duration, id } ) )
     }, duration)
   })
 
@@ -85,7 +87,7 @@ app.get('/', (req, res) => {
   res.send('ready to work ' + id)
 })
 
-app.listen(port, () => {
-  //register()
-  console.log(`Worker ${id} listening at http://localhost:${port}`)
-})
+app.listen(workerPort, () => {
+  register()
+  console.log(`Worker ${id} listening at http://localhost:${workerPort}`)
+} )
