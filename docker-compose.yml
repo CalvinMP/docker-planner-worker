@@ -14,47 +14,33 @@ services:
       context: ./worker
     networks:
       - my_network
-          
-    ports:
-      - "8080:8080"
     environment:
-      - ADD=false
+      - ADD=true
       - MULT=true
-  
-  worker2:
+      - ADDRESSHOST=worker
+    scale: 10
+
+  worker-add:
     build:
       context: ./worker
     networks:
-      - my_network    
-    ports:
-      - "8070:8070"
+      - my_network
     environment:
       - ADD=true
       - MULT=false
-  
+      - ADDRESSHOST=worker-add
+    scale: 10
 
-
-  # worker_add_only:
-  #   build:
-  #     context: ./worker
-  #   networks:
-  #     - my_network
-  #   environment:
-  #     - ADD=true
-  #     - MULT=false
-  #   deploy:
-  #     replicas: 10
-
-  # worker_mult_only:
-  #   build:
-  #     context: ./worker
-  #   networks:
-  #     - my_network
-  #   environment:
-  #     - ADD=false
-  #     - MULT=true
-  #   deploy:
-  #     replicas: 10
+  worker-mult:
+    build:
+      context: ./worker
+    networks:
+      - my_network
+    environment:
+      - ADD=false
+      - MULT=true
+      - ADDRESSHOST=worker-mult
+    scale: 10
 
 networks:
   my_network:

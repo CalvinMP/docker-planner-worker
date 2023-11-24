@@ -12,14 +12,18 @@ const MULT =
   process.env.MULT !== undefined ? JSON.parse(process.env.MULT) : true
 const ADD = process.env.ADD !== undefined ? JSON.parse(process.env.ADD) : true
 const app = express()
-
+const addressName = process.env.ADDRESSHOST || "worker"
 const workerPort = process.env.WORKER_PORT || 8080
 const ADDRESS =
   process.env.ADDRESS !== undefined
     ? process.env.ADDRESS
-    : `http://worker:${workerPort}`
+    : `http://${addressName}:${workerPort}`
 
 const randInt = (min, max) => Math.floor(Math.random() * (max - min)) + min
+//console.log(`Registering... ADD: ${ADD}, MULT: ${MULT}`);
+
+console.log(`Register: adding ADDRESS: ${ADDRESS}`)
+
 const register = () =>
   fetch(PLANNER + '/register', {
     method: 'POST',

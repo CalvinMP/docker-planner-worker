@@ -12,10 +12,7 @@ const args = () => ({ a: randInt(0, 40), b: randInt(0, 40) })
 const generateTasks = (i) =>
   new Array(i).fill(1).map((_) => ({ type: taskType(), args: args() }))
 
-let workers = [
-  {url: 'http://worker:8080', id: 'worker'},
-  {url: 'http://worker2:8070', id: 'OUI'}
-]
+let workers = []
 
 const app = express()
 app.use(express.json())
@@ -30,8 +27,7 @@ app.get('/', (req, res) => {
 })
 
 app.post('/register', (req, res) => {
-  const { url, id } = req.body
-  console.log(url)
+  const { id, url } = req.body
   console.log(`Register: adding ${url} worker: ${id}`)
   workers.push({ id, url })
   res.send('ok')
@@ -45,7 +41,7 @@ const wait = (mili) =>
   new Promise((resolve, reject) => setTimeout(resolve, mili))
 
 const sendTask = async (worker, task) => {
-  console.log(`=> ${worker.url}/${task.type}`, task)
+  //console.log(`=> ${worker.url}/${task.type}`, task)
 
   workers = workers.filter((w) => w.id !== worker.id)
   tasks = tasks.filter((t) => t !== task)
@@ -66,14 +62,14 @@ const sendTask = async (worker, task) => {
     })
     .then((res) => {
       taskToDo -= 1
-      console.log('---')
-      console.log(nbTasks - taskToDo, '/', nbTasks, ':')
-      console.log(task, 'has res', res)
-      console.log('---')
+      //console.log('---')
+      //console.log(nbTasks - taskToDo, '/', nbTasks, ':')
+      //console.log(task, 'has res', res)
+      //console.log('---')
       return res
     })
     .catch((err) => {
-      console.error(task, ' failed', err.message)
+      //console.error(task, ' failed', err.message)
       tasks = [...tasks, task]
     })
 }
