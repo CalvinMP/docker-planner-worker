@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.7'
 
 services:
   planner:
@@ -14,12 +14,47 @@ services:
       context: ./worker
     networks:
       - my_network
-    depends_on:
-      - planner
+          
+    ports:
+      - "8080:8080"
+    environment:
+      - ADD=false
+      - MULT=true
+  
+  worker2:
+    build:
+      context: ./worker
+    networks:
+      - my_network    
+    ports:
+      - "8070:8070"
     environment:
       - ADD=true
-      - MULT=true
-    scale: 10
+      - MULT=false
+  
+
+
+  # worker_add_only:
+  #   build:
+  #     context: ./worker
+  #   networks:
+  #     - my_network
+  #   environment:
+  #     - ADD=true
+  #     - MULT=false
+  #   deploy:
+  #     replicas: 10
+
+  # worker_mult_only:
+  #   build:
+  #     context: ./worker
+  #   networks:
+  #     - my_network
+  #   environment:
+  #     - ADD=false
+  #     - MULT=true
+  #   deploy:
+  #     replicas: 10
 
 networks:
   my_network:

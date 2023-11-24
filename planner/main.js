@@ -12,7 +12,10 @@ const args = () => ({ a: randInt(0, 40), b: randInt(0, 40) })
 const generateTasks = (i) =>
   new Array(i).fill(1).map((_) => ({ type: taskType(), args: args() }))
 
-let workers = []
+let workers = [
+  {url: 'http://worker:8080', id: 'worker'},
+  {url: 'http://worker2:8070', id: 'OUI'}
+]
 
 const app = express()
 app.use(express.json())
@@ -43,10 +46,6 @@ const wait = (mili) =>
 
 const sendTask = async (worker, task) => {
   console.log(`=> ${worker.url}/${task.type}`, task)
-    //   if (!isTaskTypeSupported(worker, task.type)) {
-    //   console.error(`${worker.url} does not support task type: ${task.type}`);
-    //   return;
-    // }
 
   workers = workers.filter((w) => w.id !== worker.id)
   tasks = tasks.filter((t) => t !== task)
@@ -95,12 +94,3 @@ const server = app.listen(port, () => {
   console.log('starting tasks...')
   main()
 })
-
-
-//DEFINE
-// const isTaskTypeSupported = (worker, taskType) => {
-//   return (
-//     (taskType === 'mult' && worker.supportsMult) ||
-//     (taskType === 'add' && worker.supportsAdd)
-//   );
-// }
