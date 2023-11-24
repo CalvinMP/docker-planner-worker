@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  planner:
+    build:
+      context: ./planner
+    ports:
+      - "3000:3000"
+
+  worker:
+    build:
+      context: ./worker
+    ports:
+      - "8080:8080"
